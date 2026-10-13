@@ -33,7 +33,8 @@ annotations, or library records.
 EbookLib handles EPUB packages; Beautiful Soup extracts their text. Expanded
 EPUB folders are temporarily repackaged, then deleted. PDFs use `pdftotext`.
 Text extraction may omit visual meaning from figures, tables, and equations.
-Text commands currently parse the selected book on each invocation.
+PDF reads extract only the requested page. EPUB reads and full-text searches
+currently parse the selected book on each invocation.
 
 ## Repository conventions
 
@@ -54,9 +55,29 @@ not expose an MCP server.
 
 ```sh
 uv sync --extra dev
-uv run pytest
+uv run pytest --cov=apple_books --cov-branch --cov-report=term-missing
 uv build
 ```
 
 Tests use temporary catalogs and generated EPUBs, never the user's library.
 Do not commit books, library databases, annotation exports, or private metadata.
+
+## Validation (2026-10-13)
+
+16 offline tests pass: 156/158 executable lines (98.7%) and 70/74 branches
+(94.6%), 97.4% combined coverage. Tests cover catalog resolution, annotation
+scoping/deletion filtering, read-only SQL, EPUB spine order, expanded packages,
+heading precedence, text continuation, Unicode search offsets, PDF page-range
+arguments, and errors. PDF subprocess tests are mocked; separate live smoke
+checks used the installed Poppler and the owner's local EPUB/PDF library.
+Coverage measures exercised code, not correctness on every publication.
+
+On one locally available technical PDF, three-run median extraction time for
+page 10 was 2.9575 seconds when extracting the whole book versus 0.0242 seconds
+using a page range. Text matched exactly (5,540 characters). This excludes
+initial cloud download and is not a general library-wide benchmark.
+
+Remaining limits: complex tables, formulas, image text, malformed metadata,
+and DRM. Visible EPUB headings take precedence over navigation labels, but
+section positions are not guaranteed chapter numbers. No persistent text cache,
+OCR, or annotation pagination is implemented.
