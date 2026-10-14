@@ -240,3 +240,34 @@ def test_pdf_extraction_failure_is_json_error(tmp_path, monkeypatch, capsys):
     with pytest.raises(SystemExit):
         cli.run()
     assert 'error' in json.loads(capsys.readouterr().err)
+
+
+def test_pdf_without_trailing_separator(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+    monkeypatch.setattr(cli.subprocess, 'run', lambda *args, **kwargs: SimpleNamespace(stdout='last page'))
+    assert cli.sections(tmp_path / 'test.pdf') == [('Page 1', 'last page')]
+
+
+def test_obfuscated_fonts_do_not_block_text(book):
+    with zipfile.ZipFile(book, 'a') as archive:
+        archive.writestr('META-INF/encryption.xml',
+                        '<encryption><EncryptionMethod Algorithm="http://www.idpf.org/2008/embedding"/></encryption>')
+    assert [title for title, _ in cli.sections(book)] == ['Beta', 'Alpha']
+
+
+def test_missing_spine_item_reports_identifier(book, monkeypatch):
+    from types import SimpleNamespace
+    broken = SimpleNamespace(toc=[], spine=[('missing-chapter', 'yes')], get_item_with_id=lambda ident: None)
+    monkeypatch.setattr(cli.epub, 'read_epub', lambda *args, **kwargs: broken)
+    with pytest.raises(ValueError, match='EPUB spine references missing item: missing-chapter'):
+        cli.sections(book)
+
+
+def test_module_entrypoint(book, monkeypatch, capsys):
+    import json
+    import runpy
+    # Execute the actual module guard with synthetic content and normal CLI arguments.
+    monkeypatch.setattr(sys, 'argv', ['apple-books', 'toc', str(book)])
+    runpy.run_path(cli.__file__, run_name='__main__')
+    result = json.loads(capsys.readouterr().out)
+    assert [section['title'] for section in result['sections']] == ['Beta', 'Alpha']

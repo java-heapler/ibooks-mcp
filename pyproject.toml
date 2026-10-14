@@ -11,6 +11,9 @@ requires-python = ">=3.11"
 authors = [{ name = "Joseph Heupler" }]
 dependencies = ["EbookLib>=0.19,<0.21", "beautifulsoup4>=4.12,<5"]
 
+[project.urls]
+Repository = "https://github.com/java-heapler/ibooks-mcp"
+
 [project.scripts]
 apple-books = "apple_books.cli:run"
 
@@ -23,3 +26,4 @@ packages = ["src/apple_books"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+addopts = "--cov=apple_books --cov-branch --cov-report=term-missing --cov-fail-under=100"

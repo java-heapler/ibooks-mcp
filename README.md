@@ -1,7 +1,9 @@
-# apple-books
+# ibooks-mcp
 
 Read-only, JSON-first CLI for Apple Books on macOS. Find books by title or author,
 read EPUB sections and PDF pages, search text, and retrieve saved annotations.
+
+Repository: [java-heapler/ibooks-mcp](https://github.com/java-heapler/ibooks-mcp). The CLI and skill names remain unchanged; this package does not expose an MCP server.
 
 ## Install
 
@@ -55,7 +57,7 @@ not expose an MCP server.
 
 ```sh
 uv sync --extra dev
-uv run pytest --cov=apple_books --cov-branch --cov-report=term-missing
+uv run pytest
 uv build
 ```
 
@@ -64,8 +66,8 @@ Do not commit books, library databases, annotation exports, or private metadata.
 
 ## Validation (2026-10-13)
 
-16 offline tests pass: 156/158 executable lines (98.7%) and 70/74 branches
-(94.6%), 97.4% combined coverage. Tests cover catalog resolution, annotation
+20 offline tests pass: 158/158 executable lines and 74/74 branches (100% each).
+CI enforces 100% coverage on Python 3.11 and 3.13. Tests cover catalog resolution, annotation
 scoping/deletion filtering, read-only SQL, EPUB spine order, expanded packages,
 heading precedence, text continuation, Unicode search offsets, PDF page-range
 arguments, and errors. PDF subprocess tests are mocked; separate live smoke
