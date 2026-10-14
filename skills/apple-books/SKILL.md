@@ -5,7 +5,7 @@ description: Read and search the user's Apple Books (iBooks) library on macOS, i
 
 # Apple Books
 
-Use the read-only `apple-books` CLI. Install from this repository with `uv tool install .` if missing. It reads the live SQLite catalog and annotations without writing to Apple's databases; EPUB chapters follow the publication spine. It uses EbookLib and Beautiful Soup in an isolated Python environment, and installed Poppler `pdftotext` for PDFs. Expanded EPUB folders are packaged temporarily for reading and the temporary copy is removed automatically; originals stay unchanged.
+Use the read-only `apple-books` CLI. If missing, install with `uv tool install --python 3.13 git+https://github.com/java-heapler/ibooks-mcp.git`; setup details are in the [source README](https://github.com/java-heapler/ibooks-mcp/blob/main/README.md). It reads the live SQLite catalog and annotations without writing to Apple's databases; EPUB chapters follow the publication spine. It uses EbookLib and Beautiful Soup in an isolated Python environment, and installed Poppler `pdftotext` for PDFs. Expanded EPUB folders are packaged temporarily for reading and the temporary copy is removed automatically; originals stay unchanged.
 
 ```sh
 apple-books list --query "title or author" --limit 20
